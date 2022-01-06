@@ -1,9 +1,22 @@
-import { memo, VFC } from "react";
-import { Flex, Heading, Box, Link, IconButton } from "@chakra-ui/react"
-import { HamburgerIcon } from "@chakra-ui/icons";
+
+import { memo, useCallback, VFC } from "react";
+import { Flex, Heading, Box, Link, useDisclosure } from "@chakra-ui/react"
+import { MenuIconButton } from "../../atoms/button/MenuIconButton";
+import { MenuDrawer } from "../../molecules/MenuDrawer";
+import { useHistory } from "react-router-dom";
 
 export const Header: VFC = memo(() => {
-    return (
+  const { onOpen, onClose, isOpen } = useDisclosure()
+  const history = useHistory()
+  const onClickHome = useCallback(() => 
+    history.push("/home"), [history]);
+  const onClickUserManagement = useCallback(() => 
+    history.push("/home/user_management"), [history]);
+  const onClickSetting = useCallback(() => 
+    history.push("/home/setting"), [history]);
+
+  return (
+      <>
         <Flex
           as="nav"
           bg="teal.500"
@@ -12,7 +25,7 @@ export const Header: VFC = memo(() => {
           justify="space-between"
           padding={{ base:3, md: 5 }}
         >
-          <Flex align="center" as="a" mr={8} _hover={{ cursor: "pointer"}}>
+          <Flex align="center" as="a" mr={8} _hover={{ cursor: "pointer"}} onClick={onClickHome} >
             <Heading
               as="h1"
               fontSize={{ base: "md", md: "lg" }}
@@ -20,11 +33,18 @@ export const Header: VFC = memo(() => {
           </Flex>
             <Flex align="center" fontSize="sm" flexGrow={2} display={{ base: "none", md: "flex" }}>
                 <Box pr={4}>
-                    <Link>ユーザー一覧</Link>
+                    <Link onClick={onClickUserManagement}>ユーザー一覧</Link>
                 </Box>
-                <Link>設定</Link>
+                <Link onClick={onClickSetting}>設定</Link>
             </Flex>
-            <IconButton aria-label="メニューボタン" icon={<HamburgerIcon />} size="sm" variant="unstyled" display={{ base: "block", md: "none" }}/>
-        </Flex>
+        <MenuIconButton onOpen={onOpen} />
+      </Flex>
+      <MenuDrawer
+        onClose={onClose}
+        isOpen={isOpen}
+        onClickHome={onClickHome}
+        onClickUserManagement={onClickUserManagement}
+        onClickSetting={onClickSetting} />
+      </>
     );
 });
